@@ -1,0 +1,31 @@
+syntax = "proto3";
+option java_package = "proto";
+import "BaseProto.proto";
+
+message ConfigInfo {
+
+    string topic = 1;
+    string group = 2;
+    string configName = 3;
+    string version = 4;
+}
+
+message ConfigRequest {
+    repeated ConfigInfo configInfoList=1;
+}
+
+message ConfigResponse {
+    repeated ConfigInstance configInstanceList=1;
+}
+
+message ConfigInstance {
+
+    ConfigInfo configInfo=1;
+
+    //topic:omnis.config.group:configName:version
+    string tag = 5;
+    bytes data = 6;
+    bool enabled=7;
+    int32 createTime=8;
+    int32 updateTime=9;
+}

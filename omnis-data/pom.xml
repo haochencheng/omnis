@@ -9,7 +9,16 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>omins-data</artifactId>
+    <artifactId>omnis-data</artifactId>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>pers.omnis</groupId>
+            <artifactId>omnis-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
 
 </project>

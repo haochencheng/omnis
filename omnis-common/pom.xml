@@ -11,5 +11,9 @@
 
     <artifactId>omnis-common</artifactId>
 
+    <dependencies>
+
+    </dependencies>
+
 
 </project>

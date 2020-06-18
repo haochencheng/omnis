@@ -1,0 +1,45 @@
+syntax = "proto3";
+import "google/protobuf/any.proto";
+option java_package = "proto";
+
+message BaseMessage {
+    // 消息id
+    string messageId = 1;
+    MessageType MessageType = 2;
+    BodyType BodyType = 3;
+    bytes data = 4;
+}
+
+// p2p 消息广播到集群 半数以上节点 确认服务down 服务下线
+enum MessageType {
+
+    // 心跳 心跳同步配置 变更
+    heartBeat = 0;
+
+    // 服务上线
+    serverOn = 1;
+
+    // 服务下线
+    serverOff = 2;
+
+    //客户端上线
+    clientOn = 3;
+
+    //客户端下线
+    clientOff =4;
+
+}
+
+enum BodyType {
+    // 新增配置
+    add = 0;
+
+    // 更新配置
+    update = 1;
+
+    // 下线配置
+    offline = 2;
+
+    // 上线配置
+    online = 3;
+}
