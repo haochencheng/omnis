@@ -62,6 +62,7 @@ public class ClusterManager implements Lifecycle {
 
     @Override
     public void start() {
+        log.debug("客户端开始连接服务端集群");
         List<String> serverUrlList = clientConfig.getServerUrlList();
         int size = serverUrlList.size();
         connectClusterServerCountDownLatch=new CountDownLatch(size);
@@ -87,11 +88,12 @@ public class ClusterManager implements Lifecycle {
             String serverIp = ipPortSplit[0];
             ChannelFuture channelFuture = bootstrap.connect(serverIp, serverPort).sync();
             if (!channelFuture.awaitUninterruptibly(2, TimeUnit.SECONDS)){
+                log.error("连接服务器{}:{}超时",serverIp,serverPort);
                 throw new InterruptedException();
             }
             channel = channelFuture.channel();
             String serverId = channel.id().asLongText();
-            log.info("客户端连接成功,服务端id：{}",channel.id());
+            log.info("客户端连接{}:{}成功,服务端id：{}",serverIp,serverPort,channel.id());
             ServerInstance serverInstance=new ServerInstance();
             serverInstance.setServerPort(serverPort);
             serverInstance.setServerIp(serverIp);

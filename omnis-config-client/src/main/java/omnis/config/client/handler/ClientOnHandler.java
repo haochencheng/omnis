@@ -26,9 +26,11 @@ public class ClientOnHandler implements ClientHandler{
             ConfigProto.ConfigResponse configResponse = ConfigProto.ConfigResponse.parseFrom(data);
             List<ConfigProto.ConfigInstance> configInstanceListList = configResponse.getConfigInstanceListList();
             if (configInstanceListList.isEmpty()){
-                log.info("no config response from server");
+                log.error("no config response from server");
                 return;
             }
+            ConfigProto.ConfigInstance configInstance = configInstanceListList.get(0).toBuilder().build();
+            log.info("接收到服务器配置tag：{},data:{}",configInstance.getTag(),configInstance.getData().toString());
             //接收到配置文件 通知/唤醒主线程继续执行
             ConfigClientContextHolder.getConfigClientContext().finishInitConfig();
         } catch (InvalidProtocolBufferException e) {

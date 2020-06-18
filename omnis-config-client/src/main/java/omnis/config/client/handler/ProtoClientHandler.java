@@ -49,7 +49,7 @@ public class ProtoClientHandler extends SimpleChannelInboundHandler<BaseProto.Ba
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
-        log.info("channelActive");
+        log.debug("channelActive");
 
     }
 
