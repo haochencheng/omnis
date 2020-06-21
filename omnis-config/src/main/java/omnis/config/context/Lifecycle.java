@@ -1,5 +1,7 @@
 package omnis.config.context;
 
+import java.io.IOException;
+
 /**
  * @description:
  * @author: haochencheng
@@ -19,7 +21,7 @@ public interface Lifecycle {
 
     String OFF_LINE_CONFIG_INSTANCE_EVENT = "offline";
 
-    void start();
+    void start() throws IOException;
 
     void stop();
 

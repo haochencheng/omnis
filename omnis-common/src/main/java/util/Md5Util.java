@@ -7,7 +7,7 @@ import java.security.MessageDigest;
  * @author: haochencheng
  * @create: 2020-06-09 08:17
  **/
-public class Md5Util {
+public abstract class Md5Util {
 
     public static String getMD5(String... messages) {
         String message = "";

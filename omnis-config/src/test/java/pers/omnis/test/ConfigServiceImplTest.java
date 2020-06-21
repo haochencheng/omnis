@@ -1,6 +1,8 @@
 package pers.omnis.test;
 
 import com.google.protobuf.ByteString;
+import lombok.extern.slf4j.Slf4j;
+import omnis.config.ConfigBootStrap;
 import omnis.config.context.ConfigInstanceContext;
 import omnis.config.exception.StoreConfigInstanceErrorException;
 import org.junit.jupiter.api.Assertions;
@@ -10,6 +12,7 @@ import proto.ConfigProto;
 import omnis.config.store.ConfigServiceImpl;
 import util.Md5Util;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 
 /**
@@ -17,6 +20,7 @@ import java.nio.charset.Charset;
  * @author: haochencheng
  * @create: 2020-06-09 22:13
  **/
+@Slf4j
 public class ConfigServiceImplTest {
 
     @DisplayName("获取tag")
@@ -35,11 +39,11 @@ public class ConfigServiceImplTest {
 
     @DisplayName("启动上下文")
     @Test
-    public void startConfigInstanceContext() {
-        ConfigInstanceContext configInstanceContext = new ConfigInstanceContext();
-        configInstanceContext.start();
+    public void startConfigInstanceContext() throws IOException {
+        ConfigBootStrap.bootStrap(new String[0]);
     }
 
+    @DisplayName("获取配置中心配置文件")
     @Test
     public void getTopic() {
         ConfigInstanceContext configInstanceContext = new ConfigInstanceContext();
