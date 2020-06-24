@@ -1,8 +1,8 @@
 package omnis.config.core;
 
+import io.netty.channel.Channel;
 import lombok.Data;
 
-import java.nio.channels.Channel;
 import java.util.List;
 
 /**
@@ -37,5 +37,15 @@ public class ConfigServer {
      * 客户端连接
      */
     private List<Channel> clientChannel;
+
+    /**
+     * 服务端channel
+     */
+    private Channel serverChannel;
+
+    /**
+     * 服务状态 0 ready 1 start
+     */
+    private ServerStatus status=ServerStatus.DOWN;
 
 }

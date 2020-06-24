@@ -8,7 +8,10 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import lombok.extern.slf4j.Slf4j;
+import omnis.config.core.ConfigServer;
 import omnis.config.core.context.event.OmnisContextStartedEvent;
 import omnis.config.core.context.event.OmnisEvent;
 import omnis.config.core.context.event.OmnisEventListener;
@@ -38,12 +41,11 @@ public class ConfigInstanceContext implements ConfigInstanceEventPublisher, Life
 
     private ConfigInstanceEventSupport configInstanceEventSupport;
 
-    private Channel channel;
-
     private ResourceManager resourceManager;
 
     private ClusterManger clusterManger;
 
+    private ConfigServer configServer;
 
 
     public ConfigInstanceContext() {
@@ -77,6 +79,7 @@ public class ConfigInstanceContext implements ConfigInstanceEventPublisher, Life
         ResourceManager resourceManager=new ResourceManager();
         try {
             resourceManager.loadResource();
+            this.resourceManager=resourceManager;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -84,15 +87,18 @@ public class ConfigInstanceContext implements ConfigInstanceEventPublisher, Life
         add(configInstanceEventSupport.getConfigInstanceEventListener());
         // 发送启动事件
         publishEvent(new OmnisContextStartedEvent( this));
-        // 加入集群
+
+        // 服务启动
+        serverBootstrap();
+    }
+
+    private void joinCluster(ResourceManager resourceManager) {
         clusterManger=new ClusterManger(resourceManager.getConfigResource());
         try {
             clusterManger.clusterMeet();
         } catch (ClusterErrorException e) {
             throw new RuntimeException(e);
         }
-        // 服务启动
-        serverBootstrap();
     }
 
     private void serverBootstrap() {
@@ -110,9 +116,20 @@ public class ConfigInstanceContext implements ConfigInstanceEventPublisher, Life
                 String configServerIp = configResource.getConfigServerIp();
                 Integer configServerPort = configResource.getConfigServerPort();
                 channelFuture = serverBootstrap.bind(configServerIp, configServerPort).sync();
-                this.channel = channelFuture.channel();
+                configServer=new ConfigServer();
+                configServer.setClusterIpList(configResource.getClusterIpList());
+                configServer.setConfigServerIp(configServerIp);
+                configServer.setConfigServerPort(configServerPort);
+                configServer.setServerChannel(channelFuture.channel());
                 log.info("config server start success,the ip is {},the port is {}",configServerIp,configServerPort);
-                this.channel.closeFuture().sync();
+                // 启动监听
+                channelFuture.addListener((GenericFutureListener) future -> {
+                    if (future.isSuccess()){
+                        // 加入集群
+                        joinCluster(resourceManager);
+                    }
+                });
+                channelFuture.channel().closeFuture().sync();
             }catch (InterruptedException e){
                 log.error("config server start Interrupted ",e);
                 throw new RuntimeException(e);

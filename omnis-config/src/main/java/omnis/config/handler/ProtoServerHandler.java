@@ -18,6 +18,12 @@ import util.Md5Util;
 public class ProtoServerHandler extends SimpleChannelInboundHandler<BaseProto.BaseMessage> {
 
     @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        log.info("channelActive");
+        super.channelActive(ctx);
+    }
+
+    @Override
     protected void channelRead0(ChannelHandlerContext ctx, BaseProto.BaseMessage baseMessage) throws Exception {
         try {
             BaseProto.MessageType messageType = baseMessage.getMessageType();

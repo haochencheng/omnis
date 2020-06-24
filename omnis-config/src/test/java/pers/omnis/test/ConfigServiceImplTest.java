@@ -67,5 +67,10 @@ public class ConfigServiceImplTest {
         System.out.println(configInstance.toString());
     }
 
+    @Test
+    public void clusterCount(){
+        System.out.println(3>>1);
+        System.out.println(4>>1);
+    }
 
 }

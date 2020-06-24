@@ -38,13 +38,11 @@ public class ClusterManger {
 
     private CountDownLatch connectClusterServerCountDownLatch;
 
-    private List<ClusterServer> clusterServerList;
-    private ConcurrentHashMap<String, ClusterServer> clusterServerHashMap;
-
     /**
      * 集群服务列表
      */
-    private List<ConfigServer> configServerList;
+    private List<ClusterServer> clusterServerList;
+    private ConcurrentHashMap<String, ClusterServer> clusterServerHashMap;
 
     public ClusterManger(ConfigResource configResource) {
         this.configResource = configResource;
@@ -90,10 +88,7 @@ public class ClusterManger {
             }
             // join cluster
             ClusterServer clusterServer = new ClusterServer(ip, port, clusterIpList);
-            clusterHeartBeetScheduledService.submit(() -> {
-                connectClusterServer(clusterServer);
-
-            });
+            clusterHeartBeetScheduledService.submit(() -> connectClusterServer(clusterServer));
         });
         try {
             connectClusterServerCountDownLatch.await(CLUSTER_MEET_TIMEOUT, TimeUnit.MILLISECONDS);
@@ -102,10 +97,12 @@ public class ClusterManger {
         }
         //连接成功超过 1/2 就算成功
         if (clusterServerList.isEmpty()){
-            throw new ClusterErrorException("cluster meet fail");
+            // 集群不可用
+            return;
         }
         if (clusterServerList.size()>>1<clusterIpList.size()>>1){
-            throw new ClusterErrorException("cluster meet fail");
+            // 集群不可用
+            return;
         }
         log.debug("cluster meet success");
     }
