@@ -3,13 +3,14 @@ package omnis.config.resource;
 import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import omnis.config.core.context.resource.FileSystemResource;
+import omnis.config.exception.ParamErrorException;
 import util.InetUtil;
 
 import java.io.*;
-import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.URL;
 import java.util.*;
+
+import static constants.Constants.*;
 
 /**
  * @description:
@@ -19,16 +20,13 @@ import java.util.*;
 @Slf4j
 public class ResourceManager {
 
-    public static final String COMMENT = "#";
-    public static final String COMMA_DIVISION = ",";
-    public static final String COLON_DIVISION = ":";
-    public static final String EQUAL_SIGN_DIVISION = "=";
+
     private List<String> configResourceLocationList;
 
     public static final String SERVER_PROPERTIES_NOT_FUND = "omnis-config.properties not fund";
     public static final String OMNIS_CONFIG_PROPERTIES = "omnis-config.properties";
-    private final static String pathSeparator = File.separator;
-    public static final String DEFAULT_OMNIS_CONFIG_LOCATION = "." + pathSeparator + "config" + pathSeparator + OMNIS_CONFIG_PROPERTIES;
+
+    public static final String DEFAULT_OMNIS_CONFIG_LOCATION = "." + PATH_SEPARATOR + "config" + PATH_SEPARATOR + PATH_SEPARATOR;
     public static final String OMNIS_CONFIG_LOCATION = "omnis.config.location";
     public static final String CONFIG_SERVER_IP = "config.server.ip";
     public static final String CONFIG_SERVER_PORT = "config.server.port";
@@ -111,7 +109,12 @@ public class ResourceManager {
         String configServerPort = propertiesMap.get(CONFIG_SERVER_PORT);
         // 没配置端口 使用默认端口
         if (!StringUtil.isNullOrEmpty(configServerPort)) {
-            configResource.setConfigServerPort(Integer.valueOf(configServerPort));
+            try {
+                configResource.setConfigServerPort(Integer.valueOf(configServerPort));
+            }catch (NumberFormatException e){
+                throw new RuntimeException("config.server.port must be number");
+            }
+
         }
     }
 
@@ -124,7 +127,7 @@ public class ResourceManager {
         String serverUrlList = propertiesMap.get(CONFIG_CLUSTER_IP);
         ArrayList arrayList = new ArrayList();
         if (StringUtil.isNullOrEmpty(serverUrlList)) {
-            configResource.setServerUrlList(arrayList);
+            configResource.setClusterIpList(arrayList);
             configResource.setModel(ConfigResource.Model.StandAlone);
             return;
         }
@@ -136,7 +139,7 @@ public class ResourceManager {
             }
             arrayList.add(ipPortArray[0] + ":" + ipPortArray[1]);
         }
-        configResource.setServerUrlList(arrayList);
+        configResource.setClusterIpList(arrayList);
         if (split.length == 1) {
             configResource.setModel(ConfigResource.Model.StandAlone);
         } else {
@@ -161,7 +164,7 @@ public class ResourceManager {
                 }
                 // 支持多行 \分割
                 if (line.endsWith("\\")) {
-                    property += line.trim();
+                    property += line.trim().substring(0,line.length()-1);
                     continue;
                 }
                 if (StringUtil.isNullOrEmpty(property)) {

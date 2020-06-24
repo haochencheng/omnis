@@ -10,4 +10,8 @@ public class ParamErrorException extends Exception {
     public ParamErrorException(String message) {
         super(message);
     }
+
+    public ParamErrorException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -1,5 +1,7 @@
 package constants;
 
+import java.io.File;
+
 /**
  * @description:
  * @author: haochencheng
@@ -11,6 +13,9 @@ public class Constants {
 
     public final static Object EMPTY_OBJECT=new Object();
 
-
-
+    public static final String COMMENT = "#";
+    public static final String COMMA_DIVISION = ",";
+    public static final String COLON_DIVISION = ":";
+    public static final String EQUAL_SIGN_DIVISION = "=";
+    public final static String PATH_SEPARATOR = File.separator;
 }

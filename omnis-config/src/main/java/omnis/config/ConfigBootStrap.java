@@ -3,8 +3,6 @@ package omnis.config;
 import lombok.extern.slf4j.Slf4j;
 import omnis.config.context.ConfigInstanceContext;
 
-import java.io.IOException;
-
 /**
  * @description:
  * @author: haochencheng
@@ -13,7 +11,7 @@ import java.io.IOException;
 @Slf4j
 public class ConfigBootStrap {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         bootStrap(args);
     }
 

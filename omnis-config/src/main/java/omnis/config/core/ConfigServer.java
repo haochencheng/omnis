@@ -1,16 +1,17 @@
-package omnis.config.resource;
+package omnis.config.core;
 
 import lombok.Data;
 
+import java.nio.channels.Channel;
 import java.util.List;
 
 /**
  * @description:
  * @author: haochencheng
- * @create: 2020-06-19 21:35
+ * @create: 2020-06-21 19:58
  **/
 @Data
-public class ConfigResource {
+public class ConfigServer {
 
     /**
      * 服务ip
@@ -28,17 +29,13 @@ public class ConfigResource {
     private List<String> clusterIpList;
 
     /**
-     * 单机还是集群
+     * 是否集群模式
      */
-    private Model model;
+    private boolean isClusterModel;
 
-    public boolean isClusterModel(){
-        return model.equals(Model.Cluster);
-    }
-
-    enum Model {
-        StandAlone,
-        Cluster;
-    }
+    /**
+     * 客户端连接
+     */
+    private List<Channel> clientChannel;
 
 }
